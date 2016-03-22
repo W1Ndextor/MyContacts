@@ -1,5 +1,5 @@
 //
-//  Contact.swift
+//  ContactList.swift
 //  MyContacts
 //
 //  Created by student on 3/22/16.
@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 
 
-class Contact: NSManagedObject {
+class ContactList: NSManagedObject {
 
 // Insert code here to add functionality to your managed object subclass
 

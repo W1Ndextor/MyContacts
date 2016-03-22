@@ -1,5 +1,5 @@
 //
-//  Contact+CoreDataProperties.swift
+//  ContactList+CoreDataProperties.swift
 //  MyContacts
 //
 //  Created by student on 3/22/16.
@@ -12,10 +12,10 @@
 import Foundation
 import CoreData
 
-extension Contact {
+extension ContactList {
 
-    @NSManaged var name: String
-    @NSManaged var email: String
-    @NSManaged var phone: String
+    @NSManaged var name: String?
+    @NSManaged var email: String?
+    @NSManaged var phone: String?
 
 }
