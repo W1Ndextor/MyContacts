@@ -12,7 +12,7 @@
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="MUW-ut-S7l">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.3624368365943591" green="0.50685109771588888" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ContactListCell" textLabel="p0D-Ww-GKe" detailTextLabel="qxg-yq-sUh" style="IBUITableViewCellStyleSubtitle" id="eGR-CW-5QF">
                                 <rect key="frame" x="0.0" y="92" width="320" height="44"/>
@@ -69,4 +69,5 @@
             <point key="canvasLocation" x="-29" y="400"/>
         </scene>
     </scenes>
+    <color key="tintColor" red="1" green="0.95012879510000003" blue="0.53199828650000003" alpha="1" colorSpace="calibratedRGB"/>
 </document>
