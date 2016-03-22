@@ -14,8 +14,8 @@ import CoreData
 
 extension ContactList {
 
-    @NSManaged var name: String?
-    @NSManaged var email: String?
-    @NSManaged var phone: String?
+    @NSManaged var name: String
+    @NSManaged var email: String
+    @NSManaged var phone: String
 
 }
