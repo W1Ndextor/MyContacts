@@ -8,10 +8,28 @@
 
 import UIKit
 
-class MyContactsTableViewController: UITableViewController {
+//import core data to use NSManagedObjects
+import CoreData
 
+class MyContactsTableViewController: UITableViewController {
+    
+    //setup managed object context passed from the app delegate
+    var managedObjectContext: NSManagedObjectContext!
+    
+    // array to store data fetched from managedObjectContext
+    var contactLists = [ContactList] ()
+
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //Call helper method everytime the MyContacts screen loads
+        reloadData()
+        
+        //implement add button in navigation bar to call the addContact method
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addContact:")
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -24,28 +42,105 @@ class MyContactsTableViewController: UITableViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    //Helper method to execute fetch of data and reload to display the data fethced.
+    func reloadData () {
+        //create instance of a fetch request
+        let fetchRequest = NSFetchRequest(entityName: "ContactList")
+        
+        //execute fetch request for ContactList and catch any potential errors
+        do {
+            if let results = try managedObjectContext.executeFetchRequest(fetchRequest) as?
+                [ContactList] {
+                contactLists = results
+                tableView.reloadData()
+            }
+        } catch {
+            fatalError("There was an error fetching contacts!")
+        }
+    }
+    
+    //implementing addContact method
+    func addContact(sender: AnyObject?) {
+        
+        //create instance of alertController
+        let alert = UIAlertController(title: "Add", message: "Contact", preferredStyle: .Alert)
+        
+        //define what happenes when the alert add button is pushed
+        let addAction = UIAlertAction(title: "Add", style: .Default) { (action) -> Void in
+            
+            //setting up alert textfields based on/equal to user input
+            if let nameTextField = alert.textFields?[0], emailTextField = alert.textFields?[1], phoneTextField = alert.textFields?[2], contactListEntity = NSEntityDescription.entityForName("ContactList", inManagedObjectContext: self.managedObjectContext), name = nameTextField.text, email = emailTextField.text, phone = phoneTextField.text{
+                
+                //adding to core data
+                let newContactList = ContactList(entity: contactListEntity, insertIntoManagedObjectContext: self.managedObjectContext)
+                
+                newContactList.name = name
+                newContactList.email = email
+                newContactList.phone = phone
+                
+                do {
+                    try self.managedObjectContext.save()
+                } catch {
+                    print("Error saving the anaged object context!")
+                }
+                //fetch data that was inserted and reload the tableView to display it
+                self.reloadData()
+            }
+        }
+        
+        //define what happens when the alert cancle button is pushed which is nothing.
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Default) { (action) -> Void in
+        
+        }
+        
+        //set placeholdr text for alert textfields.
+        alert.addTextFieldWithConfigurationHandler { (textField) in textField.placeholder = "Name"
+        }
+        
+        alert.addTextFieldWithConfigurationHandler { (textField) in textField.placeholder = "Email"
+        }
+        
+        alert.addTextFieldWithConfigurationHandler { (textField) in textField.placeholder = "Phone"
+        }
+        
+        //add the created buttons to the alert
+        alert.addAction(addAction)
+        alert.addAction(cancelAction)
+        
+        //present the viewcontroller alert
+        presentViewController(alert, animated: true, completion: nil)
+    }
+
 
     // MARK: - Table view data source
 
+    //changed from 0 to 1 because 1 section is desired
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
+    //changed from 0 to contactLists.count because as many rows as there is data is desired.
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        return contactLists.count
     }
 
-    /*
+    //specify which cell to deque and configure for data.
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCellWithIdentifier("ContactListCell", forIndexPath: indexPath)
 
-        // Configure the cell...
-
+        // Configure the cell...for all data required--that is--name, email and phone.
+        //storing the cell in an immutable variable
+        let contactList = contactLists[indexPath.row]
+        //populating cell data
+        cell.textLabel?.text = contactList.name
+        cell.detailTextLabel?.text = contactList.email + " " + contactList.phone
+        //returning cell
         return cell
     }
-    */
+    
 
     /*
     // Override to support conditional editing of the table view.
