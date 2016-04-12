@@ -10,6 +10,35 @@ import UIKit
 
 //import core data to use NSManagedObjects
 import CoreData
+////start
+extension UIColor {
+    public convenience init?(hexString: String) {
+        let r, g, b, a: CGFloat
+        
+        if hexString.hasPrefix("#") {
+            let start = hexString.startIndex.advancedBy(1)
+            let hexColor = hexString.substringFromIndex(start)
+            
+            if hexColor.characters.count == 8 {
+                let scanner = NSScanner(string: hexColor)
+                var hexNumber: UInt64 = 0
+                
+                if scanner.scanHexLongLong(&hexNumber) {
+                    r = CGFloat((hexNumber & 0xff000000) >> 24) / 255
+                    g = CGFloat((hexNumber & 0x00ff0000) >> 16) / 255
+                    b = CGFloat((hexNumber & 0x0000ff00) >> 8) / 255
+                    a = CGFloat(hexNumber & 0x000000ff) / 255
+                    
+                    self.init(red: r, green: g, blue: b, alpha: a)
+                    return
+                }
+            }
+        }
+        
+        return nil
+    }
+}
+//end
 
 class MyContactsTableViewController: UITableViewController {
     
@@ -36,6 +65,15 @@ class MyContactsTableViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        
+    //start
+        navigationController?.navigationBar.barTintColor = colorWithHexString("87F528")
+        //navigationController?.navigationBar.tintColor = colorWithHexString("ff33cc")
+        
+        //let col2 = UIColor(hue: 0, saturation: 0.66, brightness: 0.66, alpha: 1)
+        ///let orange = UIColor(hexString: "#ff9933")
+        navigationController?.navigationBar.titleTextAttributes = ([NSForegroundColorAttributeName: UIColor.orangeColor()])
+        //end
     }
 
     override func didReceiveMemoryWarning() {
@@ -59,6 +97,8 @@ class MyContactsTableViewController: UITableViewController {
             fatalError("There was an error fetching contacts!")
         }
     }
+    
+    //start
     //////////////////
     func colorWithHexString (hex:String) -> UIColor {
         var cString:String = hex.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).uppercaseString
@@ -83,6 +123,8 @@ class MyContactsTableViewController: UITableViewController {
         
         return UIColor(red: CGFloat(r) / 255.0, green: CGFloat(g) / 255.0, blue: CGFloat(b) / 255.0, alpha: CGFloat(1))
     }
+    
+    //end
     //////////////////////////////
     
     //implementing addContact method
@@ -91,18 +133,22 @@ class MyContactsTableViewController: UITableViewController {
         //create instance of alertController
         let alert = UIAlertController(title: "Add", message: "Contact", preferredStyle: .Alert)
         
+        //start
         
         ////////////////////
         let color1 = colorWithHexString("F52887")
         let color2 = colorWithHexString("ff0000")
         alert.view.backgroundColor = color1
         alert.view.tintColor = color2
-        alert.view
+        //alert.view
         alert.view.layer.cornerRadius = 36
         //alert.view.layer
         /////////////////////////
         //alert.view.backgroundColor = UIColor.brownColor()
         
+        //still should try to implement alert tint options
+        
+        //end
         
         //define what happenes when the alert add button is pushed
         let addAction = UIAlertAction(title: "Add", style: .Default) { (action) -> Void in
