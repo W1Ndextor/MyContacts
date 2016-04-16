@@ -72,6 +72,19 @@ class MyContactsTableViewController: UITableViewController {
         //Call helper method everytime the MyContacts screen loads
         reloadData()
         
+        //make mutable variable for number of contacts initialize to zero
+        var totalContacts = 0
+        
+        //set the total number of contacts equal to the size of the array they are stored in
+        totalContacts = contactLists.count
+
+        //Display the name of the app and the total number of contacts in the app at any given time.
+        title = "MyContacts" + String(format: " %d", totalContacts)
+        
+            //Alternate app heading
+            //title = String(format: " %d" + " Contacts Available", totalContacts)
+        
+        
         //implement add button in navigation bar to call the addContact method
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addContact:")
 
@@ -123,7 +136,7 @@ class MyContactsTableViewController: UITableViewController {
         
         
         ////end broken code
-
+        
     }
     
     
@@ -269,12 +282,15 @@ class MyContactsTableViewController: UITableViewController {
                 
                 do {
                     try self.managedObjectContext.save()
+                    //update the number of contacts in real time
+                    self.viewDidLoad()
                 } catch {
                     print("Error saving the anaged object context!")
                 }
                 //fetch data that was inserted and reload the tableView to display it
                 self.reloadData()
             }
+            
         }
         
         //define what happens when the alert cancle button is pushed which is nothing.
@@ -321,7 +337,7 @@ class MyContactsTableViewController: UITableViewController {
 
         
         
-        ///below you will find code which attempts to implement a color change on a cell when a contact is selected however i could not get it to work properly the default gray value was an eye strain and it needed to go because of my broght green text. I simply changed the selesction style to none as you can see by my code, I figured it want an enormous deal because this is simply a list and selection seems liek a rather menial feature at this stage in the implementation. I suspect that the issues here had to do with color settings set in the storyboard file but i am not entirely sure. also worth noting is that there were a few other options such as cell.selectionStyle = .Blue but these also didnt work, I suspect for the same reason.
+        ///below you will find code which attempts to implement a color change on a cell when a contact is selected however i could not get it to work properly the default gray value was an eye strain and it needed to go because of my broght green text. I simply changed the selesction style to none as you can see by my code, I figured it wasnt an enormous deal because this is simply a list and selection seems like a rather menial feature at this stage in the implementation. I suspect that the issues here had to do with color settings set in the storyboard file but i am not entirely sure. also worth noting is that there were a few other options such as cell.selectionStyle = .Blue but these also didnt work, I suspect for the same reason.
         
         
         
@@ -372,25 +388,42 @@ class MyContactsTableViewController: UITableViewController {
     }
     
 
-    /*
+    
     // Override to support conditional editing of the table view.
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return true
     }
-    */
+    
 
-    /*
+    
     // Override to support editing the table view.
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        
+        //check if delete edit is being made
         if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+            
+            //get that items row and store the element of the array it is contained in into the variable item
+            let item = contactLists[indexPath.row]
+            
+            //delete the item
+            managedObjectContext.deleteObject(item)
+            
+            do {
+                //save the deletion edit
+                try self.managedObjectContext.save()
+                //update the number of contacts in real time
+                self.viewDidLoad()
+            } catch {
+                //catch any errors
+                print("Error saving the managed object context")
+            }
+            //relaod the table view
+            reloadData()
+        }
     }
-    */
+    
+    
 
     /*
     // Override to support rearranging the table view.
