@@ -87,7 +87,9 @@ class MyContactsTableViewController: UITableViewController {
         
         
         //implement add button in navigation bar to call the addContact method
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addContact:")
+        
+        //Refactored single button to an array of buttons that when pushed will call a corresponding method.
+        navigationItem.rightBarButtonItems = [UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addContact:"), UIBarButtonItem(title: "Filter", style: .Plain, target: self, action: "selectFilter:"), UIBarButtonItem(title: "Sort", style: .Plain, target: self, action: "selectSort:")]
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -154,9 +156,22 @@ class MyContactsTableViewController: UITableViewController {
     }
     
     //Helper method to execute fetch of data and reload to display the data fethced.
-    func reloadData () {
+    
+    //Refactored method to contain two optional parameters (whi hwill be predicates) these are used for filtering and sorting
+    func reloadData (nameFilter: String? = nil, sortDescriptor: String? = nil) {
         //create instance of a fetch request
         let fetchRequest = NSFetchRequest(entityName: "ContactList")
+        
+        //Wherever name is equal to the value passed into the function the core data will be sorted based on the passed argument additionaaly =[c] makes the argument case insensitive
+        if let nameFilter = nameFilter{
+            let namePredicate = NSPredicate(format: "name =[c] %@", nameFilter)
+            fetchRequest.predicate = namePredicate
+        }
+        
+        //Creating instance of sort descriptor based on parameter passed then associate it with the fetch request and execute the fetch request
+        if let sortDescriptor = sortDescriptor {
+            fetchRequest.sortDescriptors = [NSSortDescriptor(key: sortDescriptor, ascending: true)]
+        }
         
         //execute fetch request for ContactList and catch any potential errors
         do {
@@ -168,6 +183,67 @@ class MyContactsTableViewController: UITableViewController {
         } catch {
             fatalError("There was an error fetching contacts!")
         }
+    }
+    
+    func selectFilter(sender: AnyObject?) {
+        //Create instance of UI alert controller.
+        let alert = UIAlertController(title: "Filter", message: "Contacts", preferredStyle: .Alert)
+        
+        //Creating action for filtering of core data.
+        let filterAction = UIAlertAction(title: "Filter", style: .Default) {
+            (action) -> Void in
+            
+            //Referencing textfield and passing the data in the textfield to the reload date method.
+        if let nameTextField = alert.textFields?[0], name = nameTextField.text {
+            self.reloadData(name)
+            }
+        }
+        
+        
+        //Creating cancel Action which basically calls the reloadData() method passing nothing to it.
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Default) { (action) -> Void in
+        self.reloadData()
+        }
+        
+        alert.addTextFieldWithConfigurationHandler { (textField) in textField.placeholder = "Name"
+    
+        }
+        
+        //Putting the actions into the alert.
+        alert.addAction(filterAction)
+        alert.addAction(cancelAction)
+        
+        //presenting the alert
+        presentViewController(alert, animated: true, completion: nil)
+    }
+
+
+
+    
+    func selectSort(sender: AnyObject?) {
+        
+        //Create instance of an alert sheet and adding buttons to it.
+        let sheet = UIAlertController(title: "Sort", message: "Contacts", preferredStyle: .ActionSheet)
+        
+        //Adding Cancle button which does nothing.
+        sheet.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: {(action) -> Void in
+            self.reloadData()
+        }))
+        
+        
+        //Adding sort by name button whic hsorts by name.
+        sheet.addAction(UIAlertAction(title: "By Name", style: .Default, handler: {(action) -> Void in
+            self.reloadData(nil, sortDescriptor: "name")
+        }))
+        
+        //Adding sort by email button which sorts by email.
+        sheet.addAction(UIAlertAction(title: "By Email", style: .Default, handler: {(action) -> Void in
+            self.reloadData(nil, sortDescriptor: "email")
+        }))
+        
+        presentViewController(sheet, animated: true, completion: nil)
+
+        
     }
     
     ////This method will take a hexidecimal color value  as a string and converts it to a UIColor
